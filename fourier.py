@@ -53,15 +53,15 @@ text = ""
 #endregion setup
 
 #region setup
-def get_number_input(prompt): #ChatGPT
-    """ Function to get numerical input before the main loop. """
+def get_number_input(prompt): #Written by ChatGPT
+    #Function to get numerical input before the main loop.
     input_text = ""
     prompt_surface = font_prompt.render(prompt, True, WHITE)
     prompt_rect = prompt_surface.get_rect(center=(screen_width // 2, screen_height // 4))
 
     while True:
-        screen.fill(BLACK) #why does it error here when I exit early
-        pygame.draw.rect(screen, WHITE, ((0,0), (screen_width, screen_height)), 3)
+        screen.fill(BLACK) 
+        pygame.draw.rect(screen, WHITE, ((0,0), (screen_width, screen_height)), 3) #draw border
         screen.blit(prompt_surface, prompt_rect)
 
         input_surface = font_prompt.render(input_text, True, WHITE)
@@ -82,46 +82,50 @@ def get_number_input(prompt): #ChatGPT
                 elif event.unicode.isdigit() or (event.unicode == '-' and input_text == ""):  # Allow negative sign at the beginning
                     input_text += event.unicode
 
-def hsv_to_rgb(hue): #ChatGPT
+def hsv_to_rgb(hue): #Written by ChatGPT
     r, g, b = colorsys.hsv_to_rgb(hue, .75, .75)  # Full saturation and brightness
     return int(r * 255), int(g * 255), int(b * 255)  # Convert to 8-bit RGB
 
-def normalize(array_start, array_new, array_ratios, full_value):
-    #total = 0
+def normalize(array_start, array_new, array_ratios, full_value): 
+    #Adjust speed and length inputs to standard values without changing ratios
     total = sum(abs(x) for x in array_start)
     length = len(array_start)
     temp_array = array_start[:]
     array_new.clear()
 
-    for i in range(length):
-        num_percent = temp_array[i]/total
+    for i in range(length): 
+        num_percent = temp_array[i]/total 
         array_new.append(num_percent*full_value)
         array_ratios.append(num_percent*full_value/(full_value/100))
 
-def calculate_repeat_nums(speeds):
+def calculate_repeat_nums(speeds): 
+    #Returns an array where each i element holds the number of rotations of the i'th arm until the full system repeats
     game_states["gcd_value"] = reduce(math.gcd, speeds)
     return [abs(x//game_states["gcd_value"]) if x != 0 else 0 for x in speeds]
 
 def calculate_ratios(input_array, ratios):
+    #Calculates the speed and length ratios of each arm
     for i in range(len(input_array)):
         fraction = Fraction(input_array[i]/100).limit_denominator()
         ratios.append(fraction.numerator)
         ratios.append(fraction.denominator)
 
 def calculate_frequencies(num_arms, freq_high, freq_low):
+    #Returns an array with the frequency for each i arm
+    #Equally spaced between the high and low arguments
     if game_states["num_arms"] == 1:
         frequencies = [(freq_low + freq_high)/2]
     elif num_arms == 2:
         frequencies = [freq_low, freq_high]
     else:
         frequencies = [freq_low]
-        increment = (freq_high - freq_low)/(num_arms - 1)
+        increment = (freq_high - freq_low)/(num_arms - 1) #space between frequencies
         for i in range(1,num_arms-1):
             frequencies.append(freq_low + i*increment)
         frequencies.append(freq_high)
     return frequencies
 
-def generate_sound(frequency, duration, volume): #ChatGPT
+def generate_sound(frequency, duration, volume): #Written by ChatGPT
     sample_rate = 44100  # Samples per second
     t = np.linspace(0, duration, int(sample_rate * duration), False)
 
@@ -143,13 +147,14 @@ class Button:
         self.width = width
         self.height = height
         self.color = color
-        self.button_number = button_number
+        self.button_number = button_number #Unused?
         self.function = button_functions[button_number]
         self.button_name = button_names[button_number]
         self.press, self.hover = False, False
 
     def display_button(self, mouse_pos):
-        self.color = button_pressed if self.press or self.hover == True else button_color
+        self.color = button_pressed if self.press or self.hover == True else button_color 
+        #Changes the color of the button if it's pressed or the user hovers over it
         pygame.draw.rect(screen, self.color, ((self.top_left_x + 5, self.top_left_y), (self.width, self.height)), 0, 10)        
         pygame.draw.rect(screen, WHITE, ((self.top_left_x + 5, self.top_left_y), (self.width, self.height)), 2, 10)
 
