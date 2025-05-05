@@ -170,7 +170,7 @@ class Button:
             game_states["last_click"] = "left" if event.button == 1 else "right"
             self.function(self)
 
-def create_buttons():
+def create_buttons(): #creates each button object
     button_space = 10
     curr_height = screen_height - button_space - button_height - 10
     left_space = button_space+5
